@@ -7,28 +7,47 @@
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
     <style>
+        /* Light theme variables */
         :root {
-            --bg-dark: #0a0f1e;
-            --card-bg: rgba(255, 255, 255, 0.08);
-            --accent-indigo: #6366f1;
-            --accent-violet: #8b5cf6;
-            --text-light: #f8fafc;
-            --text-muted: #94a3b8;
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --border-color: rgba(200, 200, 200, 0.3);
+            --card-bg: rgba(255, 255, 255, 0.7);
+            --shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --primary: #3b82f6;
             --success: #10b981;
+        }
+
+        /* Dark theme variables */
+        .dark-theme {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border-color: rgba(100, 100, 100, 0.3);
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --primary: #60a5fa;
+            --success: #34d399;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
         }
 
         body {
-            background-color: var(--bg-dark);
-            color: var(--text-light);
+            background: var(--bg-primary);
+            color: var(--text-primary);
             min-height: 100vh;
             padding: 2rem;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .container {
@@ -47,11 +66,36 @@
 
         h1 {
             font-size: 1.75rem;
-            background: linear-gradient(90deg, var(--accent-indigo), var(--accent-violet));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
             font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
         }
 
         .stats-container {
@@ -65,9 +109,15 @@
             background: var(--card-bg);
             backdrop-filter: blur(10px);
             border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
             padding: 1.5rem;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
 
         .stat-card {
@@ -79,14 +129,11 @@
             font-size: 2.5rem;
             font-weight: 700;
             margin: 0.5rem 0;
-            background: linear-gradient(90deg, var(--accent-indigo), var(--accent-violet));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+            color: var(--primary);
         }
 
         .stat-label {
-            color: var(--text-muted);
+            color: var(--text-secondary);
             font-size: 1rem;
         }
 
@@ -105,50 +152,63 @@
         .chart-container {
             height: 400px;
             position: relative;
-        }
-
-        .controls {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
+            padding: 1rem;
         }
 
         select {
             background: var(--card-bg);
-            color: var(--text-light);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
             padding: 0.5rem 1rem;
             backdrop-filter: blur(10px);
             cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
         }
 
         select:focus {
             outline: none;
-            border-color: var(--accent-indigo);
+            border-color: var(--primary);
+        }
+
+        select:hover {
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .dark-theme select:hover {
+            background: rgba(30, 41, 59, 0.9);
         }
 
         .source-item {
             display: flex;
             justify-content: space-between;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .source-name {
-            color: var(--text-muted);
+            color: var(--text-secondary);
         }
 
         .source-count {
             font-weight: 600;
+            color: var(--text-primary);
         }
 
         footer {
             text-align: center;
             margin-top: 2rem;
-            color: var(--text-muted);
+            color: var(--text-secondary);
             font-size: 0.9rem;
+        }
+
+        /* Glass morphism effect */
+        .glass {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
         }
 
         @media (max-width: 768px) {
@@ -163,6 +223,10 @@
             h1 {
                 font-size: 1.5rem;
             }
+            
+            .controls {
+                gap: 0.5rem;
+            }
         }
     </style>
 </head>
@@ -171,6 +235,7 @@
         <header>
             <h1>ExpendoX Referral Analytics</h1>
             <div class="controls">
+                <button id="themeToggle" class="theme-toggle">☀️</button>
                 <select id="dateRange">
                     <option value="7">Last 7 Days</option>
                     <option value="30">Last 30 Days</option>
@@ -233,15 +298,102 @@
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlpYmh0ZHVzc2Z1Y2l0b3JmemlrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4NTYxMzIsImV4cCI6MjA5MDQzMjEzMn0.l4WelyaUnRvX-73zwFHcA5lOsyZhtx-L83jS_ndLXcE';
         const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
+        // Theme toggle functionality
+        function toggleTheme() {
+            const body = document.body;
+            const themeToggle = document.getElementById('themeToggle');
+            
+            body.classList.toggle('dark-theme');
+            
+            // Update button icon based on theme
+            if (body.classList.contains('dark-theme')) {
+                themeToggle.textContent = '🌙';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeToggle.textContent = '☀️';
+                localStorage.setItem('theme', 'light');
+            }
+            
+            // Re-render chart with new theme colors
+            if (referralChart) {
+                updateChartTheme();
+            }
+        }
+
+        // Apply saved theme or default to light theme
+        function applySavedTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const themeToggle = document.getElementById('themeToggle');
+            
+            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.body.classList.add('dark-theme');
+                themeToggle.textContent = '🌙';
+            } else {
+                themeToggle.textContent = '☀️';
+            }
+        }
+
+        // Update chart colors based on theme
+        function updateChartTheme() {
+            if (!referralChart) return;
+            
+            const isDark = document.body.classList.contains('dark-theme');
+            
+            // Update axis colors
+            referralChart.options.scales.x.ticks.color = isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)';
+            referralChart.options.scales.y.ticks.color = isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)';
+            referralChart.options.scales.x.grid.color = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+            referralChart.options.scales.y.grid.color = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+            referralChart.options.plugins.legend.labels.color = isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)';
+            
+            // Update chart colors
+            const colors = isDark ? [
+                'rgba(99, 102, 241, 0.8)',
+                'rgba(139, 92, 246, 0.8)',
+                'rgba(16, 185, 129, 0.8)',
+                'rgba(245, 158, 11, 0.8)',
+                'rgba(236, 72, 153, 0.8)',
+                'rgba(59, 130, 246, 0.8)'
+            ] : [
+                'rgba(99, 102, 241, 0.7)',
+                'rgba(139, 92, 246, 0.7)',
+                'rgba(16, 185, 129, 0.7)',
+                'rgba(245, 158, 11, 0.7)',
+                'rgba(236, 72, 153, 0.7)',
+                'rgba(59, 130, 246, 0.7)'
+            ];
+            
+            const borderColors = isDark ? [
+                'rgb(99, 102, 241)',
+                'rgb(139, 92, 246)',
+                'rgb(16, 185, 129)',
+                'rgb(245, 158, 11)',
+                'rgb(236, 72, 153)',
+                'rgb(59, 130, 246)'
+            ] : [
+                'rgb(99, 102, 241)',
+                'rgb(139, 92, 246)',
+                'rgb(16, 185, 129)',
+                'rgb(245, 158, 11)',
+                'rgb(236, 72, 153)',
+                'rgb(59, 130, 246)'
+            ];
+            
+            referralChart.data.datasets[0].backgroundColor = colors;
+            referralChart.data.datasets[0].borderColor = borderColors;
+            referralChart.update();
+        }
+
         // Chart.js configuration
         const ctx = document.getElementById('referralChart').getContext('2d');
         let referralChart;
 
         // Source labels
-        const sources = ['Instagram', 'YouTube', 'Friend / Word of mouth', 'Reddit', 'App Store', 'Other', 'skipped'];
+        const sources = ['Instagram', 'YouTube', 'Friend / Word of mouth', 'Reddit', 'App Store', 'Other'];
 
         // Initialize the dashboard
         async function initDashboard() {
+            applySavedTheme();
             await fetchData();
             setupEventListeners();
             setInterval(fetchData, 60000); // Auto-refresh every 60 seconds
@@ -293,7 +445,7 @@
                 
                 // Reset chart
                 if (referralChart) {
-                    referralChart.data.datasets[0].data = [0, 0, 0, 0, 0, 0, 0];
+                    referralChart.data.datasets[0].data = [0, 0, 0, 0, 0, 0];
                     referralChart.update();
                 }
             }
@@ -306,7 +458,7 @@
             sources.forEach(source => counts[source] = 0);
             
             data.forEach(item => {
-                const source = item.source || 'skipped';
+                const source = item.source || 'Other';
                 counts[source] = (counts[source] || 0) + 1;
             });
 
@@ -347,6 +499,7 @@
             
             if (referralChart) {
                 referralChart.data.datasets[0].data = chartData;
+                updateChartTheme();
                 referralChart.update();
             } else {
                 // Check if Chart.js is available
@@ -368,8 +521,7 @@
                                 'rgba(16, 185, 129, 0.7)',
                                 'rgba(245, 158, 11, 0.7)',
                                 'rgba(236, 72, 153, 0.7)',
-                                'rgba(59, 130, 246, 0.7)',
-                                'rgba(156, 163, 175, 0.7)'
+                                'rgba(59, 130, 246, 0.7)'
                             ],
                             borderColor: [
                                 'rgb(99, 102, 241)',
@@ -377,51 +529,72 @@
                                 'rgb(16, 185, 129)',
                                 'rgb(245, 158, 11)',
                                 'rgb(236, 72, 153)',
-                                'rgb(59, 130, 246)',
-                                'rgb(156, 163, 175)'
+                                'rgb(59, 130, 246)'
                             ],
-                            borderWidth: 1
+                            borderWidth: 1,
+                            borderRadius: 8,
+                            borderSkipped: false,
                         }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    color: 'rgba(255, 255, 255, 0.7)'
-                                },
-                                grid: {
-                                    color: 'rgba(255, 255, 255, 0.1)'
-                                }
-                            },
-                            x: {
-                                ticks: {
-                                    color: 'rgba(255, 255, 255, 0.7)',
-                                    maxRotation: 45,
-                                    minRotation: 45
-                                },
-                                grid: {
-                                    display: false
-                                }
-                            }
-                        },
                         plugins: {
                             legend: {
                                 labels: {
-                                    color: 'rgba(255, 255, 255, 0.7)'
+                                    color: 'rgba(0, 0, 0, 0.7)',
+                                    font: {
+                                        size: 14
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                                titleColor: 'rgba(255, 255, 255, 1)',
+                                bodyColor: 'rgba(255, 255, 255, 0.8)',
+                                borderColor: 'rgba(255, 255, 255, 0.1)',
+                                borderWidth: 1,
+                                cornerRadius: 8,
+                                displayColors: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.1)'
+                                },
+                                ticks: {
+                                    color: 'rgba(0, 0, 0, 0.7)'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                },
+                                ticks: {
+                                    color: 'rgba(0, 0, 0, 0.7)',
+                                    maxRotation: 45,
+                                    minRotation: 45
                                 }
                             }
+                        },
+                        animation: {
+                            duration: 1000,
+                            easing: 'easeInOutQuart'
                         }
                     }
                 });
+                
+                // Apply theme to the chart
+                updateChartTheme();
             }
         }
 
         // Setup event listeners
         function setupEventListeners() {
             document.getElementById('dateRange').addEventListener('change', fetchData);
+            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
         }
 
         // Initialize the dashboard immediately
