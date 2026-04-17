@@ -14,11 +14,12 @@
             --text-primary: #0f172a;
             --text-secondary: #64748b;
             --border-color: rgba(200, 200, 200, 0.3);
-            --card-bg: rgba(255, 255, 255, 0.7);
+            --card-bg: rgba(255, 255, 255, 0.5);
             --shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-border: rgba(255, 255, 255, 0.3);
             --primary: #3b82f6;
             --success: #10b981;
+            --glass-blur: blur(12px);
         }
 
         /* Dark theme variables */
@@ -27,12 +28,13 @@
             --bg-secondary: #1e293b;
             --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
-            --border-color: rgba(100, 100, 100, 0.3);
-            --card-bg: rgba(30, 41, 59, 0.7);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --card-bg: rgba(30, 41, 59, 0.5);
             --shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
             --glass-border: rgba(255, 255, 255, 0.1);
             --primary: #60a5fa;
             --success: #34d399;
+            --glass-blur: blur(12px);
         }
 
         * {
@@ -80,7 +82,7 @@
 
         .theme-toggle {
             background: var(--card-bg);
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--glass-border);
             border-radius: 50%;
             width: 40px;
             height: 40px;
@@ -89,13 +91,28 @@
             align-items: center;
             justify-content: center;
             font-size: 1.2rem;
-            backdrop-filter: blur(10px);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
             box-shadow: var(--shadow);
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-toggle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.01));
+            z-index: -1;
         }
 
         .theme-toggle:hover {
             transform: scale(1.1);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
         }
 
         .stats-container {
@@ -107,17 +124,32 @@
 
         .card {
             background: var(--card-bg);
-            backdrop-filter: blur(10px);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
             border-radius: 16px;
             border: 1px solid var(--glass-border);
             padding: 1.5rem;
             box-shadow: var(--shadow);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.01));
+            z-index: -1;
+            border-radius: 16px;
         }
 
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
         }
 
         .stat-card {
@@ -153,31 +185,65 @@
             height: 400px;
             position: relative;
             padding: 1rem;
+            background: var(--card-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .chart-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+            z-index: -1;
         }
 
         select {
             background: var(--card-bg);
             color: var(--text-primary);
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--glass-border);
             border-radius: 12px;
             padding: 0.5rem 1rem;
-            backdrop-filter: blur(10px);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
             cursor: pointer;
             box-shadow: var(--shadow);
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        select::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.01));
+            z-index: -1;
         }
 
         select:focus {
             outline: none;
             border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
         }
 
         select:hover {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.7);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
         }
 
         .dark-theme select:hover {
-            background: rgba(30, 41, 59, 0.9);
+            background: rgba(30, 41, 59, 0.7);
         }
 
         .source-item {
@@ -240,6 +306,11 @@
                     <option value="7">Last 7 Days</option>
                     <option value="30">Last 30 Days</option>
                     <option value="all">All Time</option>
+                </select>
+                <select id="graphType">
+                    <option value="bar">Bar Chart</option>
+                    <option value="pie">Pie Chart</option>
+                    <option value="line">Line Chart</option>
                 </select>
             </div>
         </header>
@@ -495,106 +566,262 @@
 
         // Update chart with new data
         function updateChart(counts) {
+            const chartType = document.getElementById('graphType').value;
             const chartData = sources.map(source => counts[source] || 0);
             
+            // Destroy existing chart if it exists
             if (referralChart) {
-                referralChart.data.datasets[0].data = chartData;
-                updateChartTheme();
-                referralChart.update();
-            } else {
-                // Check if Chart.js is available
-                if (typeof Chart === 'undefined') {
-                    console.error('Chart.js is not available');
-                    return;
-                }
-                
-                referralChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: sources,
-                        datasets: [{
-                            label: 'Referrals by Source',
-                            data: chartData,
-                            backgroundColor: [
-                                'rgba(99, 102, 241, 0.7)',
-                                'rgba(139, 92, 246, 0.7)',
-                                'rgba(16, 185, 129, 0.7)',
-                                'rgba(245, 158, 11, 0.7)',
-                                'rgba(236, 72, 153, 0.7)',
-                                'rgba(59, 130, 246, 0.7)'
-                            ],
-                            borderColor: [
-                                'rgb(99, 102, 241)',
-                                'rgb(139, 92, 246)',
-                                'rgb(16, 185, 129)',
-                                'rgb(245, 158, 11)',
-                                'rgb(236, 72, 153)',
-                                'rgb(59, 130, 246)'
-                            ],
-                            borderWidth: 1,
-                            borderRadius: 8,
-                            borderSkipped: false,
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                labels: {
-                                    color: 'rgba(0, 0, 0, 0.7)',
-                                    font: {
-                                        size: 14
-                                    }
-                                }
-                            },
-                            tooltip: {
-                                backgroundColor: 'rgba(30, 41, 59, 0.9)',
-                                titleColor: 'rgba(255, 255, 255, 1)',
-                                bodyColor: 'rgba(255, 255, 255, 0.8)',
-                                borderColor: 'rgba(255, 255, 255, 0.1)',
-                                borderWidth: 1,
-                                cornerRadius: 8,
-                                displayColors: false
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                grid: {
-                                    color: 'rgba(0, 0, 0, 0.1)'
-                                },
-                                ticks: {
-                                    color: 'rgba(0, 0, 0, 0.7)'
-                                }
-                            },
-                            x: {
-                                grid: {
-                                    display: false
-                                },
-                                ticks: {
-                                    color: 'rgba(0, 0, 0, 0.7)',
-                                    maxRotation: 45,
-                                    minRotation: 45
-                                }
-                            }
-                        },
-                        animation: {
-                            duration: 1000,
-                            easing: 'easeInOutQuart'
-                        }
-                    }
-                });
-                
-                // Apply theme to the chart
-                updateChartTheme();
+                referralChart.destroy();
             }
+            
+            // Check if Chart.js is available
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js is not available');
+                return;
+            }
+            
+            // Create chart based on selected type
+            switch(chartType) {
+                case 'pie':
+                    createPieChart(chartData, counts);
+                    break;
+                case 'line':
+                    createLineChart(chartData);
+                    break;
+                case 'bar':
+                default:
+                    createBarChart(chartData);
+                    break;
+            }
+        }
+        
+        // Create bar chart
+        function createBarChart(chartData) {
+            referralChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: sources,
+                    datasets: [{
+                        label: 'Referrals by Source',
+                        data: chartData,
+                        backgroundColor: [
+                            'rgba(99, 102, 241, 0.7)',
+                            'rgba(139, 92, 246, 0.7)',
+                            'rgba(16, 185, 129, 0.7)',
+                            'rgba(245, 158, 11, 0.7)',
+                            'rgba(236, 72, 153, 0.7)',
+                            'rgba(59, 130, 246, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgb(99, 102, 241)',
+                            'rgb(139, 92, 246)',
+                            'rgb(16, 185, 129)',
+                            'rgb(245, 158, 11)',
+                            'rgb(236, 72, 153)',
+                            'rgb(59, 130, 246)'
+                        ],
+                        borderWidth: 1,
+                        borderRadius: 8,
+                        borderSkipped: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                            titleColor: 'rgba(255, 255, 255, 1)',
+                            bodyColor: 'rgba(255, 255, 255, 0.8)',
+                            borderColor: 'rgba(255, 255, 255, 0.1)',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            displayColors: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(0, 0, 0, 0.7)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: 'rgba(0, 0, 0, 0.7)',
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            });
+            
+            // Apply theme to the chart
+            updateChartTheme();
+        }
+        
+        // Create pie chart
+        function createPieChart(chartData, counts) {
+            // Calculate percentages for labels
+            const total = chartData.reduce((a, b) => a + b, 0);
+            const percentages = chartData.map(value => total > 0 ? Math.round((value / total) * 100) : 0);
+            
+            referralChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: sources.map((source, index) => `${source} (${percentages[index]}%)`),
+                    datasets: [{
+                        data: chartData,
+                        backgroundColor: [
+                            'rgba(99, 102, 241, 0.7)',
+                            'rgba(139, 92, 246, 0.7)',
+                            'rgba(16, 185, 129, 0.7)',
+                            'rgba(245, 158, 11, 0.7)',
+                            'rgba(236, 72, 153, 0.7)',
+                            'rgba(59, 130, 246, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgb(99, 102, 241)',
+                            'rgb(139, 92, 246)',
+                            'rgb(16, 185, 129)',
+                            'rgb(245, 158, 11)',
+                            'rgb(236, 72, 153)',
+                            'rgb(59, 130, 246)'
+                        ],
+                        borderWidth: 1,
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                color: 'rgba(0, 0, 0, 0.7)',
+                                font: {
+                                    size: 12
+                                },
+                                padding: 15
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const source = sources[context.dataIndex];
+                                    const count = chartData[context.dataIndex];
+                                    const percentage = percentages[context.dataIndex];
+                                    return `${source}: ${count} (${percentage}%)`;
+                                }
+                            },
+                            backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                            titleColor: 'rgba(255, 255, 255, 1)',
+                            bodyColor: 'rgba(255, 255, 255, 0.8)',
+                            borderColor: 'rgba(255, 255, 255, 0.1)',
+                            borderWidth: 1,
+                            cornerRadius: 8
+                        }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            });
+            
+            // Apply theme to the chart
+            updateChartTheme();
+        }
+        
+        // Create line chart
+        function createLineChart(chartData) {
+            referralChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: sources,
+                    datasets: [{
+                        label: 'Referrals by Source',
+                        data: chartData,
+                        backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                        borderColor: 'rgba(99, 102, 241, 1)',
+                        borderWidth: 3,
+                        pointBackgroundColor: 'rgba(99, 102, 241, 1)',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6,
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                            titleColor: 'rgba(255, 255, 255, 1)',
+                            bodyColor: 'rgba(255, 255, 255, 0.8)',
+                            borderColor: 'rgba(255, 255, 255, 0.1)',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            displayColors: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(0, 0, 0, 0.7)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: 'rgba(0, 0, 0, 0.7)',
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            });
+            
+            // Apply theme to the chart
+            updateChartTheme();
         }
 
         // Setup event listeners
         function setupEventListeners() {
             document.getElementById('dateRange').addEventListener('change', fetchData);
             document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+            document.getElementById('graphType').addEventListener('change', fetchData);
         }
 
         // Initialize the dashboard immediately
