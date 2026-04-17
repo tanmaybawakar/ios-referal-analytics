@@ -407,16 +407,22 @@
         // Update chart colors based on theme
         function updateChartTheme() {
             if (!referralChart) return;
-            
+
             const isDark = document.body.classList.contains('dark-theme');
-            
-            // Update axis colors
-            referralChart.options.scales.x.ticks.color = isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)';
-            referralChart.options.scales.y.ticks.color = isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)';
-            referralChart.options.scales.x.grid.color = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
-            referralChart.options.scales.y.grid.color = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
-            referralChart.options.plugins.legend.labels.color = isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)';
-            
+
+            // Update axis colors only for charts with scales (bar and line charts)
+            if (referralChart.options.scales) {
+                referralChart.options.scales.x.ticks.color = isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)';
+                referralChart.options.scales.y.ticks.color = isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)';
+                referralChart.options.scales.x.grid.color = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+                referralChart.options.scales.y.grid.color = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+            }
+
+            // Update legend colors
+            if (referralChart.options.plugins && referralChart.options.plugins.legend && referralChart.options.plugins.legend.labels) {
+                referralChart.options.plugins.legend.labels.color = isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)';
+            }
+
             // Update chart colors
             const colors = isDark ? [
                 'rgba(99, 102, 241, 0.8)',
@@ -433,7 +439,7 @@
                 'rgba(236, 72, 153, 0.7)',
                 'rgba(59, 130, 246, 0.7)'
             ];
-            
+
             const borderColors = isDark ? [
                 'rgb(99, 102, 241)',
                 'rgb(139, 92, 246)',
@@ -449,7 +455,7 @@
                 'rgb(236, 72, 153)',
                 'rgb(59, 130, 246)'
             ];
-            
+
             referralChart.data.datasets[0].backgroundColor = colors;
             referralChart.data.datasets[0].borderColor = borderColors;
             referralChart.update();
