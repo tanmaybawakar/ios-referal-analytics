@@ -231,7 +231,7 @@
         // Initialize Supabase
         const supabaseUrl = 'https://yibhtdussfucitorfzik.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlpYmh0ZHVzc2Z1Y2l0b3JmemlrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4NTYxMzIsImV4cCI6MjA5MDQzMjEzMn0.l4WelyaUnRvX-73zwFHcA5lOsyZhtx-L83jS_ndLXcE';
-        const supabase = supabaseJs.createClient(supabaseUrl, supabaseKey);
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
         // Chart.js configuration
         const ctx = document.getElementById('referralChart').getContext('2d');
