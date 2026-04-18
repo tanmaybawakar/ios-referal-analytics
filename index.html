@@ -406,16 +406,24 @@
 
         // Update chart colors based on theme
         function updateChartTheme() {
-            if (!referralChart) return;
+            if (!referralChart || !referralChart.options) return;
 
             const isDark = document.body.classList.contains('dark-theme');
 
             // Update axis colors only for charts with scales (bar and line charts)
-            if (referralChart.options.scales) {
-                referralChart.options.scales.x.ticks.color = isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)';
-                referralChart.options.scales.y.ticks.color = isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)';
-                referralChart.options.scales.x.grid.color = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
-                referralChart.options.scales.y.grid.color = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+            if (referralChart.options.scales && referralChart.options.scales.x && referralChart.options.scales.y) {
+                if (referralChart.options.scales.x.ticks) {
+                    referralChart.options.scales.x.ticks.color = isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)';
+                }
+                if (referralChart.options.scales.y.ticks) {
+                    referralChart.options.scales.y.ticks.color = isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)';
+                }
+                if (referralChart.options.scales.x.grid) {
+                    referralChart.options.scales.x.grid.color = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+                }
+                if (referralChart.options.scales.y.grid) {
+                    referralChart.options.scales.y.grid.color = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+                }
             }
 
             // Update legend colors
@@ -456,9 +464,11 @@
                 'rgb(59, 130, 246)'
             ];
 
-            referralChart.data.datasets[0].backgroundColor = colors;
-            referralChart.data.datasets[0].borderColor = borderColors;
-            referralChart.update();
+            if (referralChart.data && referralChart.data.datasets && referralChart.data.datasets[0]) {
+                referralChart.data.datasets[0].backgroundColor = colors;
+                referralChart.data.datasets[0].borderColor = borderColors;
+                referralChart.update();
+            }
         }
 
         // Chart.js configuration
